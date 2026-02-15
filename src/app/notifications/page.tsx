@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+
 import { notifications } from "@/lib/api";
 import type { NotificationDto } from "@/types";
+import { useToast } from "@/context/toast-context";
 import { useNotificationHub } from "@/hooks/useNotificationHub";
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
@@ -35,6 +37,7 @@ export default function NotificationsPage() {
     []
   );
   const { connected } = useNotificationHub(handleRealTimeNotification);
+  const { showError } = useToast();
 
   const fetchAll = async () => {
     setLoading(true);
@@ -43,7 +46,7 @@ export default function NotificationsPage() {
       setData(result);
       setActiveFilter("none");
     } catch (err) {
-      console.error("Failed to load notifications", err);
+      showError(err);
     } finally {
       setLoading(false);
     }
@@ -58,7 +61,7 @@ export default function NotificationsPage() {
       setData(result);
       setActiveFilter("tenant");
     } catch (err) {
-      console.error("Failed to filter by tenant", err);
+      showError(err);
     } finally {
       setLoading(false);
     }
@@ -73,7 +76,7 @@ export default function NotificationsPage() {
       setData(result);
       setActiveFilter("vehicle");
     } catch (err) {
-      console.error("Failed to filter by vehicle", err);
+      showError(err);
     } finally {
       setLoading(false);
     }
@@ -94,7 +97,7 @@ export default function NotificationsPage() {
         await fetchAll();
       }
     } catch (err) {
-      console.error("Failed to mark as read", err);
+      showError(err);
     }
   };
 
@@ -130,7 +133,7 @@ export default function NotificationsPage() {
         await fetchAll();
       }
     } catch (err) {
-      console.error("Failed to create notification", err);
+      showError(err);
     } finally {
       setSaving(false);
     }
@@ -151,7 +154,7 @@ export default function NotificationsPage() {
         await fetchAll();
       }
     } catch (err) {
-      console.error("Failed to create quick sample", err);
+      showError(err);
     } finally {
       setQuickSaving(false);
     }

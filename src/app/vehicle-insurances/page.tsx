@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { vehicleInsurances } from "@/lib/api";
 import type { VehicleInsuranceDto } from "@/types";
+import { useToast } from "@/context/toast-context";
 import PageHeader from "@/components/PageHeader";
 import DataTable from "@/components/DataTable";
 import Modal from "@/components/Modal";
@@ -42,6 +44,7 @@ export default function VehicleInsurancesPage() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [filterVehicleId, setFilterVehicleId] = useState("");
+  const { showError } = useToast();
 
   async function load() {
     setLoading(true);
@@ -58,7 +61,8 @@ export default function VehicleInsurancesPage() {
         const list = await vehicleInsurances.getAll();
         setData(list);
       }
-    } catch {
+    } catch (err) {
+      showError(err);
       setData([]);
     } finally {
       setLoading(false);
@@ -91,8 +95,8 @@ export default function VehicleInsurancesPage() {
     try {
       await vehicleInsurances.delete(insurance.id);
       await load();
-    } catch {
-      alert("Failed to delete insurance.");
+    } catch (err) {
+      showError(err);
     }
   }
 
@@ -112,8 +116,8 @@ export default function VehicleInsurancesPage() {
       }
       setModalOpen(false);
       await load();
-    } catch {
-      alert("Failed to save insurance.");
+    } catch (err) {
+      showError(err);
     } finally {
       setSaving(false);
     }

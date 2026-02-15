@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { vehicleParts } from "@/lib/api";
 import type { VehiclePartDto } from "@/types";
+import { useToast } from "@/context/toast-context";
 import PageHeader from "@/components/PageHeader";
 import DataTable from "@/components/DataTable";
 import Modal from "@/components/Modal";
@@ -37,6 +39,7 @@ export default function VehiclePartsPage() {
   const [confirmDelete, setConfirmDelete] = useState<VehiclePartDto | null>(null);
   const [saving, setSaving] = useState(false);
   const [filterVehicleId, setFilterVehicleId] = useState("");
+  const { showError } = useToast();
 
   const fetchAll = async () => {
     setLoading(true);
@@ -44,7 +47,7 @@ export default function VehiclePartsPage() {
       const result = await vehicleParts.getAll();
       setData(result);
     } catch (err) {
-      console.error("Failed to load vehicle parts", err);
+      showError(err);
       setData([]);
     } finally {
       setLoading(false);
@@ -114,7 +117,7 @@ export default function VehiclePartsPage() {
       closeModal();
       await fetchAll();
     } catch (err) {
-      console.error("Failed to save vehicle part", err);
+      showError(err);
     } finally {
       setSaving(false);
     }
@@ -128,7 +131,7 @@ export default function VehiclePartsPage() {
       setConfirmDelete(null);
       await fetchAll();
     } catch (err) {
-      console.error("Failed to delete vehicle part", err);
+      showError(err);
     } finally {
       setSaving(false);
     }

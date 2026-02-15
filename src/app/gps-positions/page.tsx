@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { gpsPositions, vehicles } from "@/lib/api";
 import type { GpsPositionDto, VehicleDto } from "@/types";
+import { useToast } from "@/context/toast-context";
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import FormField, { inputClass, btnPrimary, btnSecondary } from "@/components/FormField";
@@ -41,18 +43,21 @@ export default function GpsPositionsPage() {
   const [lastStopLoading, setLastStopLoading] = useState(false);
   const [lastStopError, setLastStopError] = useState("");
 
+  const { showError } = useToast();
+
   useEffect(() => {
     async function loadVehicles() {
       try {
         const list = await vehicles.getAll();
         setVehicleList(list);
-      } catch {
-        // vehicles may not be available
+      } catch (err) {
+        showError(err);
       } finally {
         setLoadingVehicles(false);
       }
     }
     loadVehicles();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Report GPS Position handler ──────────────────────────────────────
@@ -75,6 +80,7 @@ export default function GpsPositionsPage() {
       setSubmitMsg({ type: "success", text: `GPS position reported successfully (ID: ${created.id}).` });
       setForm(emptyForm);
     } catch (err: unknown) {
+      showError(err);
       const message = err instanceof Error ? err.message : "Unknown error";
       setSubmitMsg({ type: "error", text: `Failed to report position: ${message}` });
     } finally {
@@ -93,6 +99,7 @@ export default function GpsPositionsPage() {
       const distance = await gpsPositions.getDistance(Number(distVehicleId), start, end);
       setDistResult(distance);
     } catch (err: unknown) {
+      showError(err);
       const message = err instanceof Error ? err.message : "Unknown error";
       setDistError(`Failed to calculate distance: ${message}`);
     } finally {
@@ -109,6 +116,7 @@ export default function GpsPositionsPage() {
       const distance = await gpsPositions.getDistanceFromLastStop(Number(lastStopVehicleId));
       setLastStopResult(distance);
     } catch (err: unknown) {
+      showError(err);
       const message = err instanceof Error ? err.message : "Unknown error";
       setLastStopError(`Failed to get distance: ${message}`);
     } finally {

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { vehicleTechnicalInspections } from "@/lib/api";
 import type { VehicleTechnicalInspectionDto } from "@/types";
+import { useToast } from "@/context/toast-context";
 import PageHeader from "@/components/PageHeader";
 import DataTable from "@/components/DataTable";
 import Modal from "@/components/Modal";
@@ -44,6 +46,7 @@ export default function VehicleInspectionsPage() {
   const [confirmDelete, setConfirmDelete] = useState<VehicleTechnicalInspectionDto | null>(null);
   const [saving, setSaving] = useState(false);
   const [filterVehicleId, setFilterVehicleId] = useState("");
+  const { showError } = useToast();
 
   const fetchData = async () => {
     setLoading(true);
@@ -51,7 +54,7 @@ export default function VehicleInspectionsPage() {
       const result = await vehicleTechnicalInspections.getAll();
       setData(result);
     } catch (err) {
-      console.error("Failed to load inspections", err);
+      showError(err);
       setData([]);
     } finally {
       setLoading(false);
@@ -108,7 +111,7 @@ export default function VehicleInspectionsPage() {
       closeModal();
       await fetchData();
     } catch (err) {
-      console.error("Failed to save inspection", err);
+      showError(err);
     } finally {
       setSaving(false);
     }
@@ -122,7 +125,7 @@ export default function VehicleInspectionsPage() {
       setConfirmDelete(null);
       await fetchData();
     } catch (err) {
-      console.error("Failed to delete inspection", err);
+      showError(err);
     } finally {
       setSaving(false);
     }

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { vehicles } from "@/lib/api";
 import type { VehicleDto } from "@/types";
+import { useToast } from "@/context/toast-context";
 import PageHeader from "@/components/PageHeader";
 import DataTable from "@/components/DataTable";
 import Modal from "@/components/Modal";
@@ -25,33 +27,33 @@ export default function VehiclesPage() {
   const [editing, setEditing] = useState<VehicleDto | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
-
-  // Inline info display per vehicle row
   const [infoMap, setInfoMap] = useState<Record<number, string>>({});
+  const { showError } = useToast();
 
-  async function load() {
+  const load = async () => {
     setLoading(true);
     try {
       const list = await vehicles.getAll();
       setData(list);
-    } catch {
-      // API may not be available
+    } catch (err) {
+      showError(err);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function openCreate() {
+  const openCreate = () => {
     setEditing(null);
     setForm(emptyForm);
     setModalOpen(true);
-  }
+  };
 
-  function openEdit(vehicle: VehicleDto) {
+  const openEdit = (vehicle: VehicleDto) => {
     setEditing(vehicle);
     setForm({
       plateNumber: vehicle.plateNumber ?? "",
@@ -63,19 +65,19 @@ export default function VehiclesPage() {
       tenantId: vehicle.tenantId,
     });
     setModalOpen(true);
-  }
+  };
 
-  async function handleDelete(vehicle: VehicleDto) {
+  const handleDelete = async (vehicle: VehicleDto) => {
     if (!confirm(`Delete vehicle "${vehicle.plateNumber || vehicle.vin || vehicle.id}"?`)) return;
     try {
       await vehicles.delete(vehicle.id);
       await load();
-    } catch {
-      alert("Failed to delete vehicle.");
+    } catch (err) {
+      showError(err);
     }
-  }
+  };
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
@@ -95,24 +97,25 @@ export default function VehiclesPage() {
       }
       setModalOpen(false);
       await load();
-    } catch {
-      alert("Failed to save vehicle.");
+    } catch (err) {
+      showError(err);
     } finally {
       setSaving(false);
     }
-  }
+  };
 
-  async function fetchFuelLevel(id: number) {
+  const fetchFuelLevel = async (id: number) => {
     setInfoMap((prev) => ({ ...prev, [id]: "Loading fuel level..." }));
     try {
       const level = await vehicles.getFuelLevel(id);
       setInfoMap((prev) => ({ ...prev, [id]: `Fuel Level: ${level} L` }));
-    } catch {
+    } catch (err) {
+      showError(err);
       setInfoMap((prev) => ({ ...prev, [id]: "Fuel level unavailable" }));
     }
-  }
+  };
 
-  async function fetchLastPosition(id: number) {
+  const fetchLastPosition = async (id: number) => {
     setInfoMap((prev) => ({ ...prev, [id]: "Loading position..." }));
     try {
       const pos = await vehicles.getLastPosition(id);
@@ -120,10 +123,11 @@ export default function VehiclesPage() {
         ...prev,
         [id]: `Last Position: ${pos.latitude.toFixed(5)}, ${pos.longitude.toFixed(5)} | Speed: ${pos.speedKph ?? "N/A"} kph | ${pos.timestampUtc}`,
       }));
-    } catch {
+    } catch (err) {
+      showError(err);
       setInfoMap((prev) => ({ ...prev, [id]: "Position unavailable" }));
     }
-  }
+  };
 
   const columns = [
     { key: "id", header: "ID" },

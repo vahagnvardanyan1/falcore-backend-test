@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { fuelAlerts, vehicles } from "@/lib/api";
 import type { FuelAlertDto, VehicleDto, FuelAlertTypeDto } from "@/types";
+import { useToast } from "@/context/toast-context";
 import PageHeader from "@/components/PageHeader";
 import DataTable from "@/components/DataTable";
 import Modal from "@/components/Modal";
@@ -21,19 +23,21 @@ export default function FuelAlertsPage() {
   const [form, setForm] = useState(emptyForm);
   const [confirmDelete, setConfirmDelete] = useState<FuelAlertDto | null>(null);
   const [saving, setSaving] = useState(false);
+  const { showError } = useToast();
 
   useEffect(() => {
-    async function loadVehicles() {
+    const loadVehicles = async () => {
       try {
         const result = await vehicles.getAll();
         setVehicleList(result);
       } catch (err) {
-        console.error("Failed to load vehicles", err);
+        showError(err);
       } finally {
         setLoadingVehicles(false);
       }
-    }
+    };
     loadVehicles();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchAlerts = async (vehicleId: number) => {
@@ -42,7 +46,7 @@ export default function FuelAlertsPage() {
       const result = await fuelAlerts.getByVehicle(vehicleId);
       setData(result);
     } catch (err) {
-      console.error("Failed to load fuel alerts", err);
+      showError(err);
       setData([]);
     } finally {
       setLoading(false);
@@ -109,7 +113,7 @@ export default function FuelAlertsPage() {
       closeModal();
       await fetchAlerts(selectedVehicleId);
     } catch (err) {
-      console.error("Failed to save fuel alert", err);
+      showError(err);
     } finally {
       setSaving(false);
     }
@@ -123,7 +127,7 @@ export default function FuelAlertsPage() {
       setConfirmDelete(null);
       await fetchAlerts(selectedVehicleId);
     } catch (err) {
-      console.error("Failed to delete fuel alert", err);
+      showError(err);
     } finally {
       setSaving(false);
     }

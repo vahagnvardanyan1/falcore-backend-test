@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { tenants } from "@/lib/api";
 import type { TenantDto } from "@/types";
+import { useToast } from "@/context/toast-context";
 import PageHeader from "@/components/PageHeader";
 import DataTable from "@/components/DataTable";
 import Modal from "@/components/Modal";
@@ -18,6 +20,7 @@ export default function TenantsPage() {
   const [form, setForm] = useState(emptyForm);
   const [confirmDelete, setConfirmDelete] = useState<TenantDto | null>(null);
   const [saving, setSaving] = useState(false);
+  const { showError } = useToast();
 
   const fetchData = async () => {
     setLoading(true);
@@ -25,7 +28,7 @@ export default function TenantsPage() {
       const result = await tenants.getAll();
       setData(result);
     } catch (err) {
-      console.error("Failed to load tenants", err);
+      showError(err);
     } finally {
       setLoading(false);
     }
@@ -33,6 +36,7 @@ export default function TenantsPage() {
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const openCreate = () => {
@@ -78,7 +82,7 @@ export default function TenantsPage() {
       closeModal();
       await fetchData();
     } catch (err) {
-      console.error("Failed to save tenant", err);
+      showError(err);
     } finally {
       setSaving(false);
     }
@@ -92,7 +96,7 @@ export default function TenantsPage() {
       setConfirmDelete(null);
       await fetchData();
     } catch (err) {
-      console.error("Failed to delete tenant", err);
+      showError(err);
     } finally {
       setSaving(false);
     }

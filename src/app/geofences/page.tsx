@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { geofences } from "@/lib/api";
 import type { GeofenceDto } from "@/types";
+import { useToast } from "@/context/toast-context";
 import PageHeader from "@/components/PageHeader";
 import DataTable from "@/components/DataTable";
 import Modal from "@/components/Modal";
@@ -30,6 +32,7 @@ export default function GeofencesPage() {
   const [checkLng, setCheckLng] = useState("");
   const [checkResults, setCheckResults] = useState<GeofenceDto[] | null>(null);
   const [checking, setChecking] = useState(false);
+  const { showError } = useToast();
 
   const fetchData = async () => {
     setLoading(true);
@@ -37,7 +40,7 @@ export default function GeofencesPage() {
       const result = await geofences.getAll();
       setData(result);
     } catch (err) {
-      console.error("Failed to load geofences", err);
+      showError(err);
     } finally {
       setLoading(false);
     }
@@ -45,6 +48,7 @@ export default function GeofencesPage() {
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const openCreate = () => {
@@ -95,7 +99,7 @@ export default function GeofencesPage() {
       closeModal();
       await fetchData();
     } catch (err) {
-      console.error("Failed to save geofence", err);
+      showError(err);
     } finally {
       setSaving(false);
     }
@@ -109,7 +113,7 @@ export default function GeofencesPage() {
       setConfirmDelete(null);
       await fetchData();
     } catch (err) {
-      console.error("Failed to delete geofence", err);
+      showError(err);
     } finally {
       setSaving(false);
     }
@@ -125,7 +129,7 @@ export default function GeofencesPage() {
       );
       setCheckResults(results);
     } catch (err) {
-      console.error("Failed to check point", err);
+      showError(err);
     } finally {
       setChecking(false);
     }

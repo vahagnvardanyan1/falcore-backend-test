@@ -9,25 +9,47 @@ import type {
   VehiclePartDto,
   VehicleTechnicalInspectionDto,
 } from "@/types";
+import { ApiError } from "@/lib/api-error";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://falcore-backend-production-4bc7.up.railway.app";
 
-async function request<T>(
+const request = async <T>(
   path: string,
   options?: RequestInit
-): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
+): Promise<T> => {
+  const url = `${BASE_URL}${path}`;
+  const method = options?.method ?? "GET";
+  const requestBody = typeof options?.body === "string" ? options.body : null;
+
+  const res = await fetch(url, {
     headers: { "Content-Type": "application/json", ...options?.headers },
     ...options,
   });
+
   if (!res.ok) {
-    throw new Error(`API error ${res.status}: ${res.statusText}`);
+    let responseBody: string | null = null;
+    try {
+      responseBody = await res.text();
+    } catch {
+      // ignore read failure
+    }
+
+    throw new ApiError({
+      status: res.status,
+      statusText: res.statusText,
+      url: path,
+      method,
+      requestBody,
+      responseBody,
+      timestamp: new Date().toISOString(),
+    });
   }
+
   const text = await res.text();
   return text ? JSON.parse(text) : ({} as T);
-}
+};
 
 // ── Fuel Alerts ──────────────────────────────────────────────────────
 
