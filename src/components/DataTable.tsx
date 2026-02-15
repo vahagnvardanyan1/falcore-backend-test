@@ -46,13 +46,13 @@ export default function DataTable<T extends { id?: number }>({
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  className="text-left px-3 sm:px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap"
                 >
                   {col.header}
                 </th>
               ))}
               {(onEdit || onDelete) && (
-                <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <th className="text-right px-3 sm:px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               )}
@@ -62,14 +62,14 @@ export default function DataTable<T extends { id?: number }>({
             {data.map((item, idx) => (
               <tr key={idx} className="hover:bg-gray-50 transition-colors">
                 {columns.map((col) => (
-                  <td key={col.key} className="px-6 py-4 text-gray-700">
+                  <td key={col.key} className="px-3 sm:px-6 py-3 sm:py-4 text-gray-700">
                     {col.render
                       ? col.render(item)
                       : String((item as Record<string, unknown>)[col.key] ?? "-")}
                   </td>
                 ))}
                 {(onEdit || onDelete) && (
-                  <td className="px-6 py-4 text-right space-x-2">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-right space-x-2">
                     {onEdit && (
                       <button
                         onClick={() => onEdit(item)}

@@ -6,7 +6,7 @@ import { ToastProvider } from "@/context/toast-context";
 import ToastContainer from "@/components/ToastContainer";
 
 export const metadata: Metadata = {
-  title: "Falcore VTS",
+  title: "Falcore Backed Test",
   description: "Vehicle Tracking System",
 };
 
@@ -19,9 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <ToastProvider>
-          <div className="flex min-h-screen">
+          <div className="flex h-screen overflow-hidden">
             <Sidebar />
-            <main className="flex-1 p-8 overflow-auto">{children}</main>
+            <main className="flex-1 p-4 pt-18 overflow-auto lg:p-8 lg:pt-8">{children}</main>
           </div>
           <ToastContainer />
         </ToastProvider>

@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import Link from "next/link";
+
 import { tenants, vehicles, notifications } from "@/lib/api";
 import type { VehicleDto, NotificationDto } from "@/types";
+import { useToast } from "@/context/toast-context";
 import PageHeader from "@/components/PageHeader";
 
 export default function Dashboard() {
@@ -15,29 +18,45 @@ export default function Dashboard() {
   const [recentVehicles, setRecentVehicles] = useState<VehicleDto[]>([]);
   const [recentNotifications, setRecentNotifications] = useState<NotificationDto[]>([]);
   const [loading, setLoading] = useState(true);
+  const { showError } = useToast();
 
   useEffect(() => {
-    async function load() {
-      try {
-        const [t, v, n] = await Promise.all([
-          tenants.getAll(),
-          vehicles.getAll(),
-          notifications.getAll(),
-        ]);
-        setStats({
-          tenants: t.length,
-          vehicles: v.length,
-          unreadNotifications: n.filter((x) => !x.isRead).length,
-        });
-        setRecentVehicles(v.slice(0, 5));
-        setRecentNotifications(n.slice(0, 5));
-      } catch {
-        // API may not be available
-      } finally {
-        setLoading(false);
+    const load = async () => {
+      const [tResult, vResult, nResult] = await Promise.allSettled([
+        tenants.getAll(),
+        vehicles.getAll(),
+        notifications.getAll(),
+      ]);
+
+      if (tResult.status === "fulfilled") {
+        setStats((prev) => ({ ...prev, tenants: tResult.value.length }));
+      } else {
+        showError(tResult.reason);
       }
-    }
+
+      if (vResult.status === "fulfilled") {
+        const v = vResult.value;
+        setStats((prev) => ({ ...prev, vehicles: v.length }));
+        setRecentVehicles(v.slice(0, 5));
+      } else {
+        showError(vResult.reason);
+      }
+
+      if (nResult.status === "fulfilled") {
+        const n = nResult.value;
+        setStats((prev) => ({
+          ...prev,
+          unreadNotifications: n.filter((x) => !x.isRead).length,
+        }));
+        setRecentNotifications(n.slice(0, 5));
+      } else {
+        showError(nResult.reason);
+      }
+
+      setLoading(false);
+    };
     load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const cards = [

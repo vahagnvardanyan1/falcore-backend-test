@@ -39,11 +39,11 @@ export default function ErrorDetailModal({ toast, onClose }: ErrorDetailModalPro
       className="fixed inset-0 z-200 flex items-center justify-center bg-black/50"
       onClick={(e) => e.target === overlayRef.current && onClose()}
     >
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-3 sm:mx-4 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-200 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-gray-200 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
               <svg
                 className="w-4 h-4 text-red-600"
                 fill="none"
@@ -78,11 +78,11 @@ export default function ErrorDetailModal({ toast, onClose }: ErrorDetailModalPro
         </div>
 
         {/* Body */}
-        <div className="p-5 overflow-y-auto flex-1 space-y-4">
+        <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4">
           {details ? (
             <>
               {/* Status + Method + URL */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <InfoBlock label="Status">
                   <span className="font-mono text-red-600 font-bold text-lg">
                     {details.status}
@@ -125,7 +125,7 @@ export default function ErrorDetailModal({ toast, onClose }: ErrorDetailModalPro
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end p-5 border-t border-gray-200 shrink-0">
+        <div className="flex items-center justify-end p-4 sm:p-5 border-t border-gray-200 shrink-0">
           <button
             onClick={onClose}
             className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors"
@@ -164,7 +164,7 @@ const CodeBlock = ({
     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
       {label}
     </p>
-    <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-xs font-mono overflow-x-auto max-h-60 whitespace-pre-wrap wrap-break-word">
+    <pre className="bg-gray-900 text-green-400 rounded-lg p-3 sm:p-4 text-xs font-mono overflow-x-auto max-h-48 sm:max-h-60 whitespace-pre-wrap wrap-break-word">
       {content}
     </pre>
   </div>
