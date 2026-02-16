@@ -1,4 +1,5 @@
 import type {
+  DistanceFromLastStopDto,
   FuelAlertDto,
   GeofenceDto,
   GpsPositionDto,
@@ -111,7 +112,7 @@ export const gpsPositions = {
       `/api/GpsPositions/distance?vehicleId=${vehicleId}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`
     ),
   getDistanceFromLastStop: (vehicleId: number) =>
-    request<number>(
+    request<DistanceFromLastStopDto>(
       `/api/GpsPositions/distance-from-last-stop?vehicleId=${vehicleId}`
     ),
 };

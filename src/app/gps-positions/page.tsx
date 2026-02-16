@@ -39,7 +39,7 @@ export default function GpsPositionsPage() {
 
   // ── Distance From Last Stop ──────────────────────────────────────────
   const [lastStopVehicleId, setLastStopVehicleId] = useState("");
-  const [lastStopResult, setLastStopResult] = useState<number | null>(null);
+  const [lastStopResult, setLastStopResult] = useState<{ distance: number; lastStopTime: string } | null>(null);
   const [lastStopLoading, setLastStopLoading] = useState(false);
   const [lastStopError, setLastStopError] = useState("");
 
@@ -113,8 +113,11 @@ export default function GpsPositionsPage() {
     setLastStopResult(null);
     setLastStopError("");
     try {
-      const distance = await gpsPositions.getDistanceFromLastStop(Number(lastStopVehicleId));
-      setLastStopResult(Number(distance));
+      const result = await gpsPositions.getDistanceFromLastStop(Number(lastStopVehicleId));
+      setLastStopResult({
+        distance: Number(result.distanceSinceStop),
+        lastStopTime: result.lastStopTime,
+      });
     } catch (err: unknown) {
       showError(err);
       const message = err instanceof Error ? err.message : "Unknown error";
@@ -350,9 +353,14 @@ export default function GpsPositionsPage() {
               </button>
 
               {lastStopResult !== null && (
-                <span className="text-sm font-semibold text-gray-800 bg-blue-50 px-3 py-1.5 rounded-lg">
-                  Distance from last stop: {lastStopResult.toFixed(2)} km
-                </span>
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-semibold text-gray-800 bg-blue-50 px-3 py-1.5 rounded-lg">
+                    Distance from last stop: {lastStopResult.distance.toFixed(2)} km
+                  </span>
+                  <span className="text-xs text-gray-500 px-3">
+                    Last stop: {new Date(lastStopResult.lastStopTime).toLocaleString()}
+                  </span>
+                </div>
               )}
 
               {lastStopError && (

@@ -89,3 +89,8 @@ export interface VehicleTechnicalInspectionDto {
   vehicleId: number;
   expiryDate: string;
 }
+
+export interface DistanceFromLastStopDto {
+  lastStopTime: string;
+  distanceSinceStop: number;
+}
