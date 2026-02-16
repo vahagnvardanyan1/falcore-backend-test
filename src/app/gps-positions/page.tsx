@@ -97,7 +97,7 @@ export default function GpsPositionsPage() {
       const start = new Date(distStart).toISOString();
       const end = new Date(distEnd).toISOString();
       const distance = await gpsPositions.getDistance(Number(distVehicleId), start, end);
-      setDistResult(distance);
+      setDistResult(Number(distance));
     } catch (err: unknown) {
       showError(err);
       const message = err instanceof Error ? err.message : "Unknown error";
@@ -114,7 +114,7 @@ export default function GpsPositionsPage() {
     setLastStopError("");
     try {
       const distance = await gpsPositions.getDistanceFromLastStop(Number(lastStopVehicleId));
-      setLastStopResult(distance);
+      setLastStopResult(Number(distance));
     } catch (err: unknown) {
       showError(err);
       const message = err instanceof Error ? err.message : "Unknown error";
