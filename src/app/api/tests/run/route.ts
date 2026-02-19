@@ -24,12 +24,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  let playwrightCli: string;
-  try {
-    playwrightCli = require.resolve("@playwright/test/cli");
-  } catch {
-    playwrightCli = path.resolve(process.cwd(), "node_modules", "@playwright", "test", "cli.js");
-  }
+  const playwrightCli = path.join(process.cwd(), "node_modules", "@playwright", "test", "cli.js");
   const args = [playwrightCli, "test", "--reporter=list"];
   if (suite) args.push(SUITES[suite]);
 
