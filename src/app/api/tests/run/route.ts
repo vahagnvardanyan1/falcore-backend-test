@@ -24,12 +24,17 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const playwrightBin = path.resolve(process.cwd(), "node_modules", ".bin", "playwright");
-  const args = ["test", "--reporter=list"];
+  let playwrightCli: string;
+  try {
+    playwrightCli = require.resolve("@playwright/test/cli");
+  } catch {
+    playwrightCli = path.resolve(process.cwd(), "node_modules", "@playwright", "test", "cli.js");
+  }
+  const args = [playwrightCli, "test", "--reporter=list"];
   if (suite) args.push(SUITES[suite]);
 
   return new Promise<NextResponse>((resolve) => {
-    execFile(playwrightBin, args, { timeout: 120_000, maxBuffer: 5 * 1024 * 1024, cwd: process.cwd() }, (error, stdout, stderr) => {
+    execFile(process.execPath, args, { timeout: 120_000, maxBuffer: 5 * 1024 * 1024, cwd: process.cwd() }, (error, stdout, stderr) => {
       const parts = [stdout, stderr, error?.message].filter(Boolean);
       const output = parts.join("\n") || "No output captured.";
       const passed = !error;
