@@ -6,7 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "playwright test",
+    "test:tenants": "playwright test tests/tenants.spec.ts",
+    "test:vehicles": "playwright test tests/vehicles.spec.ts",
+    "test:fuel-alerts": "playwright test tests/fuel-alerts.spec.ts",
+    "test:geofences": "playwright test tests/geofences.spec.ts",
+    "test:gps-positions": "playwright test tests/gps-positions.spec.ts",
+    "test:notifications": "playwright test tests/notifications.spec.ts",
+    "test:vehicle-insurances": "playwright test tests/vehicle-insurances.spec.ts",
+    "test:vehicle-parts": "playwright test tests/vehicle-parts.spec.ts",
+    "test:vehicle-technical-inspections": "playwright test tests/vehicle-technical-inspections.spec.ts"
   },
   "dependencies": {
     "@microsoft/signalr": "^10.0.0",
@@ -15,6 +25,7 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
