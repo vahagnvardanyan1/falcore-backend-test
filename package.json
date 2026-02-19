@@ -20,13 +20,12 @@
   },
   "dependencies": {
     "@microsoft/signalr": "^10.0.0",
-    "@playwright/test": "^1.58.2",
     "next": "16.1.6",
-    "playwright": "^1.58.2",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
