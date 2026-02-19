@@ -1,4 +1,9 @@
-import { test, expect, deleteResource } from "./fixtures/api-fixtures";
+import {
+  test,
+  expect,
+  deleteResource,
+  setupTenant,
+} from "./fixtures/api-fixtures";
 import {
   createTenantPayload,
   createVehiclePayload,
@@ -15,11 +20,7 @@ test.describe.serial("Vehicles — CRUD lifecycle", () => {
   });
 
   test("setup — create tenant", async ({ api }) => {
-    const res = await api.post("/api/Tenants", {
-      data: createTenantPayload(),
-    });
-    const body = await res.json();
-    tenantId = body.id;
+    tenantId = await setupTenant(api);
   });
 
   test("CREATE — POST /api/Vehicles", async ({ api }) => {

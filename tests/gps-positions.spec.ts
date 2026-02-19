@@ -1,9 +1,10 @@
-import { test, expect, deleteResource } from "./fixtures/api-fixtures";
 import {
-  createTenantPayload,
-  createVehiclePayload,
-  createGpsPositionPayload,
-} from "./fixtures/test-data";
+  test,
+  expect,
+  deleteResource,
+  setupTenantAndVehicle,
+} from "./fixtures/api-fixtures";
+import { createGpsPositionPayload } from "./fixtures/test-data";
 
 test.describe.serial("GPS Positions — CRUD lifecycle", () => {
   let tenantId: number;
@@ -15,15 +16,7 @@ test.describe.serial("GPS Positions — CRUD lifecycle", () => {
   });
 
   test("setup — create tenant and vehicle", async ({ api }) => {
-    const tRes = await api.post("/api/Tenants", {
-      data: createTenantPayload(),
-    });
-    tenantId = (await tRes.json()).id;
-
-    const vRes = await api.post("/api/Vehicles", {
-      data: createVehiclePayload(tenantId),
-    });
-    vehicleId = (await vRes.json()).id;
+    ({ tenantId, vehicleId } = await setupTenantAndVehicle(api));
   });
 
   test("CREATE — POST /api/GpsPositions", async ({ api }) => {

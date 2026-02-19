@@ -1,4 +1,5 @@
 import { defineConfig } from "@playwright/test";
+import { BASE_URL } from "./tests/fixtures/api-fixtures";
 
 export default defineConfig({
   testDir: "./tests",
@@ -6,9 +7,7 @@ export default defineConfig({
   workers: 1,
   reporter: [["html"], ["list"]],
   use: {
-    baseURL:
-      process.env.API_BASE_URL ||
-      "https://falcore-backend-production-4bc7.up.railway.app",
+    baseURL: BASE_URL,
     extraHTTPHeaders: {
       "Content-Type": "application/json",
     },

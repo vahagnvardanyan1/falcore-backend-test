@@ -1,9 +1,10 @@
-import { test, expect, deleteResource } from "./fixtures/api-fixtures";
 import {
-  createTenantPayload,
-  createVehiclePayload,
-  createNotificationPayload,
-} from "./fixtures/test-data";
+  test,
+  expect,
+  deleteResource,
+  setupTenantAndVehicle,
+} from "./fixtures/api-fixtures";
+import { createNotificationPayload } from "./fixtures/test-data";
 
 test.describe.serial("Notifications — CRUD lifecycle", () => {
   let tenantId: number;
@@ -15,15 +16,7 @@ test.describe.serial("Notifications — CRUD lifecycle", () => {
   });
 
   test("setup — create tenant and vehicle", async ({ api }) => {
-    const tRes = await api.post("/api/Tenants", {
-      data: createTenantPayload(),
-    });
-    tenantId = (await tRes.json()).id;
-
-    const vRes = await api.post("/api/Vehicles", {
-      data: createVehiclePayload(tenantId),
-    });
-    vehicleId = (await vRes.json()).id;
+    ({ tenantId, vehicleId } = await setupTenantAndVehicle(api));
   });
 
   test("CREATE — POST /api/Notifications/sample (with body)", async ({
@@ -74,7 +67,6 @@ test.describe.serial("Notifications — CRUD lifecycle", () => {
   test("READ — GET /api/Notifications/:id (known valid id)", async ({
     api,
   }) => {
-    // Try to find a notification that has an id
     const listRes = await api.get("/api/Notifications");
     const notifications = await listRes.json();
     const withId = notifications.find(
