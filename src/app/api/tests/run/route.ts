@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { execFile } from "child_process";
+import path from "path";
 
 const SUITES: Record<string, string> = {
   tenants: "tests/tenants.spec.ts",
@@ -23,11 +24,12 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const args = ["playwright", "test", "--reporter=list"];
+  const playwrightBin = path.resolve(process.cwd(), "node_modules", ".bin", "playwright");
+  const args = ["test", "--reporter=list"];
   if (suite) args.push(SUITES[suite]);
 
   return new Promise<NextResponse>((resolve) => {
-    execFile("npx", args, { timeout: 120_000, maxBuffer: 5 * 1024 * 1024 }, (error, stdout, stderr) => {
+    execFile(playwrightBin, args, { timeout: 120_000, maxBuffer: 5 * 1024 * 1024, cwd: process.cwd() }, (error, stdout, stderr) => {
       const output = stdout + (stderr ? `\n${stderr}` : "");
       const passed = !error;
       const lines = output.trim().split("\n");
