@@ -30,7 +30,8 @@ export async function GET(request: NextRequest) {
 
   return new Promise<NextResponse>((resolve) => {
     execFile(playwrightBin, args, { timeout: 120_000, maxBuffer: 5 * 1024 * 1024, cwd: process.cwd() }, (error, stdout, stderr) => {
-      const output = stdout + (stderr ? `\n${stderr}` : "");
+      const parts = [stdout, stderr, error?.message].filter(Boolean);
+      const output = parts.join("\n") || "No output captured.";
       const passed = !error;
       const lines = output.trim().split("\n");
       const summary = lines.findLast((l) => /\d+ passed/.test(l)) ?? (passed ? "All passed" : "Failed");
