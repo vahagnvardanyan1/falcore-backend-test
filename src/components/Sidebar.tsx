@@ -16,7 +16,6 @@ const NAV_ITEMS = [
   { href: "/vehicle-insurances", label: "Insurances" },
   { href: "/vehicle-parts", label: "Vehicle Parts" },
   { href: "/vehicle-inspections", label: "Inspections" },
-  { href: "/test-runner", label: "Test Runner" },
 ];
 
 export default function Sidebar() {
